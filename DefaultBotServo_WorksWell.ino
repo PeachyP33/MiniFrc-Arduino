@@ -14,7 +14,8 @@ SoftwareSerial bluetooth(A0, A1); //RX,TX
 //These lines declare which ports your motors will be connected to on the motor shield.
 AF_DCMotor mLeft(2);
 AF_DCMotor mRight(3);
-AF_DCMotor mTest(4);
+AF_DCMotor mSmallMotor1(4);
+AF_DCMotor mElevator(1);
 
 //this line creates a servo called "servo1"
 SimpleSoftwareServo servo1;
@@ -37,6 +38,7 @@ float button3 = 0;
 float button4 = 0;
 float button5 = 0;
 float button6 = 0;
+float button7 = 0;
 boolean button5pressed = false;
 boolean button6pressed = false;
 boolean turned = false;
@@ -64,6 +66,7 @@ void loop() {
       button4 = bluetooth.parseFloat();
       button5 = bluetooth.parseFloat();
       button6 = bluetooth.parseFloat();
+      button7 = bluetooth.parseFloat();
 
       if (button5 == 0) {
         //Serial.println("Inside button 5 became 0 ...");
@@ -83,13 +86,21 @@ void loop() {
         servo1.write(180);
         SimpleSoftwareServo::refresh();
       } 
+
+      //Elevator Motor
+      if (button7 == 1) {
+        mElevator.run((FORWARD));     // These comands tell the motors what speed and direction to move at
+        mElevator.setSpeed(200);
+      } else {
+        mElevator.setSpeed(0);
+      }
                     
       //little motor
       if (button2 == 1) {
-        mTest.run((FORWARD));     // These comands tell the motors what speed and direction to move at
-        mTest.setSpeed(200);
+        mSmallMotor1.run((FORWARD));     // These comands tell the motors what speed and direction to move at
+        mSmallMotor1.setSpeed(200);
       } else {
-        mTest.setSpeed(0);
+        mSmallMotor1.setSpeed(0);
       }
 
       //go straight auto control (Auto1)
@@ -147,7 +158,7 @@ void loop() {
   }
 }
 
-//drive (-100, 100) for 1000 ms is 90 deg turn, so 2000 ms is 180 deg turn and 500 ms is 45 deg turn
+//drive(-100, 100) for 1000 ms is 90 deg turn, so 2000 ms is 180 deg turn and 500 ms is 45 deg turn
 
 // This function handles drive logic and actuation. Don't change this unless you know what you're doing.
 void drive(int xAxis, int yAxis) {
